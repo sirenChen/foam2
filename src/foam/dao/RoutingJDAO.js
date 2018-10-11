@@ -14,6 +14,10 @@ foam.CLASS({
     Doing this allows the underlying journal implementation to output the DAO name
     alongside the journal entry which will aid in using a single journal file.`,
 
+  implements: [
+    'foam.nanos.NanoService'
+  ],
+
   properties: [
     {
       class: 'String',
@@ -33,6 +37,12 @@ foam.CLASS({
       name: 'remove_',
       javaCode: `
         return super.remove_(x.put("service", getService()), obj);
+      `
+    },
+    {
+      name: 'start',
+      javaCode: `
+        getJournal().replay(getX(), null);
       `
     }
   ]
