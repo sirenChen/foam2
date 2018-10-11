@@ -18,6 +18,28 @@ foam.CLASS({
     'foam.nanos.NanoService'
   ],
 
+  axioms: [
+    {
+      name: 'javaExtras',
+      buildJavaClass: function (cls) {
+        cls.extras.push(`
+          // TODO: These convenience constructors should be removed and done using the facade pattern.
+          public RoutingJDAO(foam.core.X x, foam.core.ClassInfo classInfo, String service) {
+            this(x, new foam.dao.MDAO(classInfo), service);
+          }
+
+          public RoutingJDAO(foam.core.X x, foam.dao.DAO delegate, String service) {
+            setX(x);
+            setOf(delegate.getOf());
+            setDelegate(delegate);
+            setService(service);
+            setJournal((Journal) x.get("journal"));
+          }
+        `)
+      }
+    }
+  ],
+
   properties: [
     {
       class: 'String',
