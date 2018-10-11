@@ -95,7 +95,9 @@ foam.dao.DAO delegate = getInnerDAO() == null ?
 
 if ( delegate instanceof foam.dao.MDAO ) setMdao((foam.dao.MDAO)delegate);
 
-if ( getJournaled() ) {
+if ( getJournaled() && getSingleJournal() ) {
+  delegate = new foam.dao.RoutingJDAO.Builder(getX()).setOf(getOf()).setDelegate(delegate).setService(getName()).setJournal((foam.dao.Journal) getX().get("journal")).build();
+} else if ( getJournaled() && ! getSingleJournal() ) {
   delegate = new foam.dao.java.JDAO(getX(), delegate, getJournalName());
 }
 
@@ -200,6 +202,11 @@ return delegate;
     {
       class: 'String',
       name: 'journalName'
+    },
+    {
+      class: 'Boolean',
+      name: 'singleJournal',
+      value: false
     },
     {
       class: 'FObjectProperty',
