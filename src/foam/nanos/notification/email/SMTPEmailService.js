@@ -377,6 +377,16 @@ foam.nanos.session.Session session = x.get(foam.nanos.session.Session.class);
 DAO userDAO         = (DAO) x.get("localUserDAO");
 User user           = (User) userDAO.find(session.getUserId());
 
+// The group of the Business is auto-generated, 
+// We don't have the correct group email settings for the auto-generated group
+if ( user instanceof net.nanopay.model.Business ) {
+
+  ArraySink sink = (ArraySink) userDAO.where(MLang.EQ(User.EMAIL, user.getEmail()))
+    .limit(1).select(new ArraySink());  
+  user = (User) sink.getArray().get(0);
+  
+}
+
 // 1. If the user doesn't login at this time, get the user from localUserDao
 // 2. If the user is the system user, get the real user from localUserDao
 if ( user == null || user.getId() == 1 ) {
